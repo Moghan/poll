@@ -39,8 +39,10 @@ pipeline {
          }
          stage('Deploy green') {
              steps {
-                 sh 'kubectl apply -f ./k8s/poll-service-green.yaml'
-                 sh 'kubectl apply -f ./k8s/load-balancer-green-yaml'
+                 withAWS(region:'eu-north-1',credentials:'JenkinsAWS') {
+                    sh 'kubectl apply -f ./k8s/poll-service-green.yaml'
+                    sh 'kubectl apply -f ./k8s/load-balancer-green-yaml'
+                 }
              }
          }
          //stage('Upload to AWS') {
