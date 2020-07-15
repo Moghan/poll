@@ -26,8 +26,13 @@ pipeline {
                     GIT_COMMIT_HASH = sh (script: "git rev-parse --short HEAD", returnStdout: true)
                     withCredentials([usernamePassword(credentialsId: 'dockerCreds', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
                         sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                        def customImage = docker.build("ybsnek/poll:${GIT_COMMIT_HASH}")
-                        customImage.push('latest')
+                        // def customImage = docker.build("ybsnek/poll:${GIT_COMMIT_HASH}") // THIS DONT WORK! 
+                        // + docker build -t ****/poll:d22b84a
+                        //    "docker build" requires exactly 1 argument.
+                        sh "docker build -t ybsnek/poll ."
+                        sh "docker push ybsnek/poll"
+                        
+                        //customImage.push('latest')
                     }
                 }
              }
