@@ -22,15 +22,27 @@ pipeline {
                     echo "Multiline shell steps works too"
                     ls -lah
                 '''
+                GIT_COMMIT_HASH = sh (script: "git rev-parse --short HEAD", returnStdout: true)
+                withCredentials([usernamePassword(credentialsId: 'dockerCreds', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                    def customImage = docker.build("my-image:${GIT_COMMIT_HASH}")
+                    customImage.push('latest')
+                }
              }
          }
-         stage('Upload to AWS') {
-              steps {
-                  withAWS(region:'eu-north-1',credentials:'JenkinsAWS') {
-                  sh 'echo "Uploading content with AWS creds"'
-                      s3Upload(pathStyleAccessEnabled: true, payloadSigningEnabled: true, bucket:'poll.ybsnek.com', workingDir:'build', includePathPattern:'**/*')
-                  }
-              }
+         stage('Deploy green') {
+             steps {
+                 sh 'kubectl apply -f ./k8s/poll-service-green.yaml'
+                 sh 'kubectl apply -f ./k8s/load-balancer-green-yaml'
+             }
          }
+         //stage('Upload to AWS') {
+         //     steps {
+         //         withAWS(region:'eu-north-1',credentials:'JenkinsAWS') {
+         //         sh 'echo "Uploading content with AWS creds"'
+         //             s3Upload(pathStyleAccessEnabled: true, payloadSigningEnabled: true, bucket:'poll.ybsnek.com', workingDir:'build', includePathPattern:'**/*')
+         //         }
+         //     }
+         //}
      }
 }
