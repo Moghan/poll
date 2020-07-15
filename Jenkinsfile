@@ -5,13 +5,13 @@ pipeline {
     
     stages {
         stage('Security Scan') {
-              steps { 
-                 aquaMicroscanner imageName: 'alpine:latest', notCompliesCmd: 'exit 1', onDisallowed: 'fail', outputFormat: 'html'
-              }
-         }
- 
-         stage('Build') {
-             steps {
+            steps {
+                aquaMicroscanner imageName: 'alpine:latest', notCompliesCmd: 'exit 1', onDisallowed: 'fail', outputFormat: 'html'
+            }
+        }
+
+        stage('Build') {
+            steps {
                 checkout scm
                 sh 'npm config ls'
                 sh 'npm install'
@@ -35,16 +35,17 @@ pipeline {
                         //customImage.push('latest')
                     }
                 }
-             }
-         }
-         stage('Deploy green') {
-             steps {
-                 withAWS(region:'eu-north-1',credentials:'JenkinsAWS') {
+            }
+        }
+        stage('Deploy green') {
+            steps {
+                withAWS(region:'eu-north-1',credentials:'JenkinsAWS') {
+                    sh "aws eks update-kubeconfig --name my-prod"
                     sh 'kubectl apply -f ./k8s/poll-service-green.yaml'
                     sh 'kubectl apply -f ./k8s/load-balancer-green-yaml'
-                 }
-             }
-         }
+                }
+            }
+        }
          //stage('Upload to AWS') {
          //     steps {
          //         withAWS(region:'eu-north-1',credentials:'JenkinsAWS') {
@@ -53,5 +54,5 @@ pipeline {
          //         }
          //     }
          //}
-     }
+    }
 }
