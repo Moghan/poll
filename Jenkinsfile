@@ -22,11 +22,13 @@ pipeline {
                     echo "Multiline shell steps works too"
                     ls -lah
                 '''
-                GIT_COMMIT_HASH = sh (script: "git rev-parse --short HEAD", returnStdout: true)
-                withCredentials([usernamePassword(credentialsId: 'dockerCreds', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-                    sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                    def customImage = docker.build("my-image:${GIT_COMMIT_HASH}")
-                    customImage.push('latest')
+                script {
+                    GIT_COMMIT_HASH = sh (script: "git rev-parse --short HEAD", returnStdout: true)
+                    withCredentials([usernamePassword(credentialsId: 'dockerCreds', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+                        sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+                        def customImage = docker.build("my-image:${GIT_COMMIT_HASH}")
+                        customImage.push('latest')
+                    }
                 }
              }
          }
