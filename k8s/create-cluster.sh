@@ -1,0 +1,12 @@
+eksctl create cluster \
+--name my-prod \
+--version 1.17 \
+--region eu-north-1 \
+--nodegroup-name small-workers \
+--node-type t3.small \
+--nodes 2 \
+--nodes-min 1 \
+--nodes-max 3 \
+--ssh-access \
+--ssh-public-key ~/.ssh/production-cluster-key.pub \
+--managed
