@@ -26,7 +26,7 @@ pipeline {
                     GIT_COMMIT_HASH = sh (script: "git rev-parse --short HEAD", returnStdout: true)
                     withCredentials([usernamePassword(credentialsId: 'dockerCreds', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
                         sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-                        def customImage = docker.build("ybsnek/poll:${GIT_COMMIT_HASH}", ".")
+                        def customImage = docker.build("ybsnek/poll:${GIT_COMMIT_HASH}")
                         customImage.push('latest')
                     }
                 }
