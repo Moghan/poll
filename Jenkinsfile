@@ -40,7 +40,9 @@ pipeline {
         stage('Deploy green') {
             steps {
                 withAWS(region:'eu-north-1',credentials:'JenkinsAWS') {
+                    sh 'aws sts get-caller-identity'
                     sh "aws eks update-kubeconfig --name my-prod"
+                    sh 'kubectl get svc get svc'
                     sh 'kubectl apply -f ./k8s/poll-service-green.yaml'
                     sh 'kubectl apply -f ./k8s/load-balancer-green-yaml'
                 }
