@@ -8,3 +8,12 @@ In this project you will apply the skills and knowledge which were developed thr
 * Working with Ansible and CloudFormation to deploy clusters
 * Building Kubernetes clusters
 * Building Docker containers in pipelines
+
+## Getting started
+
+* Clone the repo
+* Log in to an AWS account with rights to manage clusters.
+
+
+
+Clone the project.
