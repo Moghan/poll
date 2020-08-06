@@ -17,3 +17,5 @@ In this project you will apply the skills and knowledge which were developed thr
 ## Decissions
 
 Struggled a bit creating and taking down clusters. For simplicity I decided to keep the same cluster between blue and green deployments, creating new resources within the cluster and taking down the old resources at every blue/green deployment.
+
+Named the project poll because of an app idea I plan to persue after submitting the project.
