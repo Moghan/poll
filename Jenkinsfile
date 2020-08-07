@@ -58,7 +58,7 @@ pipeline {
                     sh "aws eks update-kubeconfig --name my-prod-3"
                     sh 'kubectl get svc'
                     sh 'kubectl apply -f ./k8s/poll-service-green.yaml'
-                    sh 'kubectl apply -f ./k8s/load-balancer-green-yaml'
+                    sh 'kubectl apply -f ./k8s/load-balancer-green.yaml'
                 }
             }
         }
@@ -72,7 +72,7 @@ pipeline {
                     sh "aws eks update-kubeconfig --name my-prod-3"
                     sh 'kubectl get svc'
                     sh 'kubectl apply -f ./k8s/poll-service-blue.yaml'
-                    sh 'kubectl apply -f ./k8s/load-balancer-blue-yaml'
+                    sh 'kubectl apply -f ./k8s/load-balancer-blue.yaml'
                 }
             }
         }
