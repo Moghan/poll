@@ -37,6 +37,17 @@ pipeline {
                 }
             }
         }
+        stage('Create cluster') {
+            when {
+                branch 'create-cluster'
+            }
+            steps {
+                withAWS(region:'eu-north-1',credentials:'JenkinsAWS') {
+                    sh 'aws sts get-caller-identity'
+                    sh "sh('./k8s/create-cluster.sh')"
+                }
+            }
+        }
         stage('Deploy green') {
             when {
                 branch 'green'
