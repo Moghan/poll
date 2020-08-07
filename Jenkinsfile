@@ -37,12 +37,23 @@ pipeline {
                 }
             }
         }
+        stage('Create cluster') {
+            when {
+                branch 'create-cluster'
+            }
+            steps {
+                withAWS(region:'eu-north-1',credentials:'AdministratorAWS') {
+                    sh 'aws sts get-caller-identity'
+                    sh('./k8s/create-cluster.sh')
+                }
+            }
+        }
         stage('Deploy green') {
             when {
                 branch 'green'
             }
             steps {
-                withAWS(region:'eu-north-1',credentials:'JenkinsAWS') {
+                withAWS(region:'eu-north-1',credentials:'AdministratorAWS') {
                     sh 'aws sts get-caller-identity'
                     sh "aws eks update-kubeconfig --name my-prod-3"
                     sh 'kubectl get svc'
@@ -56,7 +67,7 @@ pipeline {
                 branch 'blue'
             }
             steps {
-                withAWS(region:'eu-north-1',credentials:'JenkinsAWS') {
+                withAWS(region:'eu-north-1',credentials:'AdministratorAWS') {
                     sh 'aws sts get-caller-identity'
                     sh "aws eks update-kubeconfig --name my-prod-3"
                     sh 'kubectl get svc'
