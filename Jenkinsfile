@@ -38,13 +38,30 @@ pipeline {
             }
         }
         stage('Deploy green') {
+            when {
+                branch 'green'
+            }
             steps {
                 withAWS(region:'eu-north-1',credentials:'JenkinsAWS') {
                     sh 'aws sts get-caller-identity'
-                    sh "aws eks update-kubeconfig --name my-prod"
-                    sh 'kubectl get svc get svc'
+                    sh "aws eks update-kubeconfig --name my-prod-3"
+                    sh 'kubectl get svc'
                     sh 'kubectl apply -f ./k8s/poll-service-green.yaml'
                     sh 'kubectl apply -f ./k8s/load-balancer-green-yaml'
+                }
+            }
+        }
+        stage('Deploy blue') {
+            when {
+                branch 'blue'
+            }
+            steps {
+                withAWS(region:'eu-north-1',credentials:'JenkinsAWS') {
+                    sh 'aws sts get-caller-identity'
+                    sh "aws eks update-kubeconfig --name my-prod-3"
+                    sh 'kubectl get svc'
+                    sh 'kubectl apply -f ./k8s/poll-service-blue.yaml'
+                    sh 'kubectl apply -f ./k8s/load-balancer-blue-yaml'
                 }
             }
         }

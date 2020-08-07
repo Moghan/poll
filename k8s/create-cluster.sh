@@ -1,5 +1,5 @@
 eksctl create cluster \
---name my-prod \
+--name my-prod-3 \
 --version 1.17 \
 --region eu-north-1 \
 --nodegroup-name small-workers \
@@ -8,5 +8,5 @@ eksctl create cluster \
 --nodes-min 1 \
 --nodes-max 3 \
 --ssh-access \
---ssh-public-key ~/.ssh/production-cluster-key.pub \
+--ssh-public-key ~/.ssh/public-production-cluster-key.pem \
 --managed
