@@ -9,9 +9,10 @@ pipeline {
                 aquaMicroscanner imageName: 'alpine:latest', notCompliesCmd: 'exit 1', onDisallowed: 'fail', outputFormat: 'html'
             }
         }
-        stage('Checkout') {
+        stage('Checkout/Install') {
             steps {
                 checkout scm
+                sh 'npm install'
             }
         }
         stage('Lint') {
@@ -21,7 +22,6 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh 'npm install'
                 sh 'npm run build'
                 
                 script {
