@@ -47,6 +47,7 @@ pipeline {
                 withAWS(region:'eu-north-1',credentials:'AdministratorAWS') {
                     sh 'aws sts get-caller-identity'
                     sh('./k8s/create-cluster.sh')
+                    sh 'kubectl apply -f ./k8s/create-namespace.yaml'                    
                 }
             }
         }
