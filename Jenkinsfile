@@ -9,19 +9,21 @@ pipeline {
                 aquaMicroscanner imageName: 'alpine:latest', notCompliesCmd: 'exit 1', onDisallowed: 'fail', outputFormat: 'html'
             }
         }
-
-        stage('Build') {
+        stage('Checkout') {
             steps {
                 checkout scm
-                sh 'npm config ls'
+            }
+        }
+        stage('Lint') {
+            steps {
+                sh 'npm run lint'                
+            }
+        }
+        stage('Build') {
+            steps {
                 sh 'npm install'
                 sh 'npm run build'
                 
-                sh 'echo "Hello World"'
-                sh '''
-                    echo "Multiline shell steps works too"
-                    ls -lah
-                '''
                 script {
                     GIT_COMMIT_HASH = sh (script: "git rev-parse --short HEAD", returnStdout: true)
                     withCredentials([usernamePassword(credentialsId: 'dockerCreds', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
