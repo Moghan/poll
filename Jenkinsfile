@@ -9,19 +9,21 @@ pipeline {
                 aquaMicroscanner imageName: 'alpine:latest', notCompliesCmd: 'exit 1', onDisallowed: 'fail', outputFormat: 'html'
             }
         }
-
-        stage('Build') {
+        stage('Checkout/Install') {
             steps {
                 checkout scm
-                sh 'npm config ls'
                 sh 'npm install'
+            }
+        }
+        stage('Lint') {
+            steps {
+                sh 'npm run lint'                
+            }
+        }
+        stage('Build') {
+            steps {
                 sh 'npm run build'
                 
-                sh 'echo "Hello World"'
-                sh '''
-                    echo "Multiline shell steps works too"
-                    ls -lah
-                '''
                 script {
                     GIT_COMMIT_HASH = sh (script: "git rev-parse --short HEAD", returnStdout: true)
                     withCredentials([usernamePassword(credentialsId: 'dockerCreds', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
@@ -58,7 +60,7 @@ pipeline {
                     sh "aws eks update-kubeconfig --name my-prod-3"
                     sh 'kubectl get svc'
                     sh 'kubectl apply -f ./k8s/poll-service-green.yaml'
-                    sh 'kubectl apply -f ./k8s/load-balancer-green-yaml'
+                    sh 'kubectl apply -f ./k8s/load-balancer-green.yaml'
                 }
             }
         }
@@ -72,7 +74,7 @@ pipeline {
                     sh "aws eks update-kubeconfig --name my-prod-3"
                     sh 'kubectl get svc'
                     sh 'kubectl apply -f ./k8s/poll-service-blue.yaml'
-                    sh 'kubectl apply -f ./k8s/load-balancer-blue-yaml'
+                    sh 'kubectl apply -f ./k8s/load-balancer-blue.yaml'
                 }
             }
         }
