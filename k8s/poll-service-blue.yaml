@@ -17,6 +17,6 @@ spec:
     spec:
       containers:
       - name: poll
-        image: nginx:1.14.2
+        image: ybsnek/poll
         ports:
         - containerPort: 80
