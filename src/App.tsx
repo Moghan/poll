@@ -1,18 +1,17 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import AWS from 'aws-sdk';
+//import AWS from 'aws-sdk';
 declare var gapi : any;
 
-const App: React.FC = () => {
-  const init = React.useEffect(() => {
-    gapi.signin2.render('g-signin2', {
-      'scope': 'https://www.googleapis.com/auth/plus.login',
-      'onsuccess': onSignIn
-    });  
-  });
+let auth2;
 
-  function onSignIn(googleUser: any) {
+interface Window {
+  onGlobalSignIn: any;
+}
+const App: React.FC = () => {
+  
+  const onGlobalSignIn = (googleUser: any) => {
     var profile = googleUser.getBasicProfile();
     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
     console.log('Name: ' + profile.getName());
@@ -20,6 +19,17 @@ const App: React.FC = () => {
     console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
   }
   
+  //@ts-ignore
+  window.onGlobalSignIn = onGlobalSignIn;
+    
+  const init = React.useEffect(() => {
+    gapi.load('auth2', () => {
+      auth2 = gapi.auth2.init({
+        client_id: '418574357913-ou3e20sjiip9ne4ilt0msp9khledhph2.apps.googleusercontent.com',
+      })
+    })
+  });
+
   function signOut() {
     var auth2 = gapi.auth2.getAuthInstance();
     auth2.signOut().then(function () {
@@ -34,17 +44,9 @@ const App: React.FC = () => {
         <p>
           Initial <code>GREEN</code> deploy.
         </p>
-        <div className="g-signin2" data-onsuccess="onSignIn"></div>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        <div className="g-signin2" data-onsuccess="onGlobalSignIn"></div>
         
-        <a href="#" onClick={signOut}>Sign out</a>
+        <button onClick={signOut}>Sign out</button>
       </header>
     </div>
   );
